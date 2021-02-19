@@ -1,7 +1,8 @@
 var config = require("./config"),
   lwm2mClient = require("lwm2m-node-lib").client,
   globalDeviceInfo,
-  separator = "\n\n\t";
+  separator = "\n\n\t",
+  clUtils = require("command-node");
 
 function clientStart() {
   lwm2mClient.init(config);

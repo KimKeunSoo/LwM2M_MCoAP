@@ -1,8 +1,10 @@
 var client_module = require("./assets/client_module");
 
+// Client 169.254.130.40 ~ 255
+
 (async function main() {
   client_module.clientStart();
-  client_module.connect("localhost", 5683, "/", "device1");
+  client_module.connect("169.254.130.33", 5683, "/", "device1");
   client_module.create("/75001/2");
 
   let i = 100;

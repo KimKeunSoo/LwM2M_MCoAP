@@ -1,9 +1,8 @@
 var config = require("./config"),
   async = require("async"),
+  lwm2mServer = require("lwm2m-node-lib").server,
+  clUtils = require("command-node"),
   globalServerInfo;
-var lwm2mServer = require("lwm2m-node-lib").server;
-var clUtils = require("command-node");
-
 function handleResult(message) {
   return function (error) {
     if (error) {
@@ -254,13 +253,13 @@ function handleValues(value, objectType, objectId, resourceId, deviceId) {
   );
 }
 
-function observe(devId, objectType, objectId, resourceId) {
+function observe(devId, objectType, objectId, resourceId, activefunction) {
   lwm2mServer.observe(
     devId,
     objectType,
     objectId,
     resourceId,
-    handleValues,
+    activefunction,
     function (error, result) {
       if (error) {
         console.log("error");
