@@ -1,10 +1,9 @@
-var config = require("./config"),
-  lwm2mClient = require("lwm2m-node-lib").client,
+var lwm2mClient = require("lwm2m-node-lib").client,
   globalDeviceInfo,
   separator = "\n\n\t",
   clUtils = require("command-node");
 
-function clientStart() {
+function start(config) {
   lwm2mClient.init(config);
 }
 
@@ -160,8 +159,7 @@ function list() {
     }
   });
 }
-
-exports.clientStart = clientStart;
+exports.start = start;
 exports.connect = connect;
 exports.create = create;
 exports.set = set;

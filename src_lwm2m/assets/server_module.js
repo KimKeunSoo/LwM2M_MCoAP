@@ -1,8 +1,11 @@
-var config = require("./config"),
-  async = require("async"),
+var async = require("async"),
   lwm2mServer = require("lwm2m-node-lib").server,
   clUtils = require("command-node"),
-  globalServerInfo;
+  globalServerInfo,
+  globalStart,
+  globalEnd,
+  flag = 0;
+
 function handleResult(message) {
   return function (error) {
     if (error) {
@@ -44,7 +47,7 @@ function setHandlers(serverInfo, callback) {
   callback();
 }
 
-function start() {
+function start(config) {
   async.waterfall(
     [async.apply(lwm2mServer.start, config.server), setHandlers],
     handleResult("Lightweight M2M Server started")
@@ -251,6 +254,12 @@ function handleValues(value, objectType, objectId, resourceId, deviceId) {
     resourceId,
     value
   );
+  if (flag == 0) {
+    var date = new Date();
+    globalEnd = date.getTime();
+    console.log("Total Time : " + (globalEnd - globalStart));
+    flag = 1;
+  }
 }
 
 function observe(devId, objectType, objectId, resourceId, activefunction) {
@@ -262,7 +271,7 @@ function observe(devId, objectType, objectId, resourceId, activefunction) {
     activefunction,
     function (error, result) {
       if (error) {
-        console.log("error");
+        console.log("error: can not observe");
       } else {
         console.log(
           "Start observing value\ndeviceID: %s\nobjectID: %s\nresourceID: %s\nOriginal value: %s\n",
@@ -270,6 +279,29 @@ function observe(devId, objectType, objectId, resourceId, activefunction) {
           objectId,
           resourceId,
           result
+        );
+        var date = new Date();
+        globalStart = date.getTime();
+        console.log("Start Time : " + globalStart);
+      }
+    }
+  );
+}
+function cancelObservation(deviceId, objectType, objectId, resourceId) {
+  lwm2mServer.cancelObserver(
+    deviceId,
+    objectType,
+    objectId,
+    resourceId,
+    function handleCancel(error) {
+      if (error) {
+        clUtils.handleError(error);
+      } else {
+        console.log(
+          "\nObservation cancelled for resource [/%s/%s/%s]\n",
+          deviceId,
+          objectType,
+          objectId
         );
       }
     }
@@ -326,131 +358,8 @@ function writeAttributes(commands) {
   }
 }
 
-function cancelObservation(commands) {
-  lwm2mServer.cancelObserver(
-    commands[0],
-    commands[1],
-    commands[2],
-    commands[3],
-    function handleCancel(error) {
-      if (error) {
-        clUtils.handleError(error);
-      } else {
-        console.log(
-          "\nObservation cancelled for resource [/%s/%s/%s]\n",
-          commands[1],
-          commands[2],
-          commands[3]
-        );
-      }
-    }
-  );
-}
-
-function testRunning(handler) {
-  return function (commands) {
-    if (lwm2mServer.isRunning()) {
-      handler(commands);
-    } else {
-      console.log(
-        "Couldn't list devices, as the server is not started. " +
-          "Start the server before issuing any command."
-      );
-    }
-  };
-}
-
-var commands = {
-  start: {
-    parameters: [],
-    description:
-      "\tStarts a new Lightweight M2M server listening in the prefconfigured port.",
-    handler: start,
-  },
-  stop: {
-    parameters: [],
-    description: "\tStops the current LWTM2M Server running.",
-    handler: testRunning(stop),
-  },
-  list: {
-    parameters: [],
-    description: "\tList all the devices connected to the server.",
-    handler: testRunning(listClients),
-  },
-  write: {
-    parameters: ["deviceId", "resourceId", "resourceValue"],
-    description:
-      "\tWrites the given value to the resource indicated by the URI (in LWTM2M format) in the given" +
-      "device.",
-    handler: testRunning(write),
-  },
-  execute: {
-    parameters: ["deviceId", "resourceId", "executionArguments"],
-    description: "\tExecutes the selected resource with the given arguments.",
-    handler: testRunning(execute),
-  },
-  read: {
-    parameters: ["deviceId", "resourceId"],
-    description:
-      "\tReads the value of the resource indicated by the URI (in LWTM2M format) in the given device.",
-    handler: testRunning(read),
-  },
-  discover: {
-    parameters: ["deviceId", "objTypeId", "objInstanceId", "resourceId"],
-    description:
-      "\tSends a discover order for the given resource to the given device.",
-    handler: testRunning(discover),
-  },
-  discoverObj: {
-    parameters: ["deviceId", "objTypeId", "objInstanceId"],
-    description:
-      "\tSends a discover order for the given instance to the given device.",
-    handler: testRunning(discoverObj),
-  },
-  discoverType: {
-    parameters: ["deviceId", "objTypeId"],
-    description:
-      "\tSends a discover order for the given resource to the given device.",
-    handler: testRunning(discoverType),
-  },
-  observe: {
-    parameters: ["deviceId", "objTypeId", "objInstanceId", "resourceId"],
-    description: "\tStablish an observation over the selected resource.",
-    handler: testRunning(observe),
-  },
-  writeAttr: {
-    parameters: [
-      "deviceId",
-      "objTypeId",
-      "objInstanceId",
-      "resourceId",
-      "attributes",
-    ],
-    description:
-      "\tWrite a new set of observation attributes to the selected resource. The attributes should be\n\t " +
-      "in the following format: name=value(,name=value)*. E.g.: pmin=1,pmax=2.",
-    handler: testRunning(writeAttributes),
-  },
-  cancel: {
-    parameters: ["deviceId", "objTypeId", "objInstanceId", "resourceId"],
-    description:
-      "\tCancel the observation order for the given resource (defined with a LWTM2M URI) " +
-      "to the given device.",
-    handler: testRunning(cancelObservation),
-  },
-  config: {
-    parameters: [],
-    description: "\tPrint the current config.",
-    handler: clUtils.showConfig(config, "server"),
-  },
-};
-
-function serverStart() {
-  command = ["start"];
-  clUtils.executeCommander(command, commands);
-}
-
-exports.serverStart = serverStart;
+exports.start = start;
+exports.cancelObservation = cancelObservation;
 exports.read = read;
 exports.observe = observe;
 exports.parseResourceId = parseResourceId;

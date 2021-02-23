@@ -10,5 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "lwm2m-node-lib": "^1.3.0"
+  },
+  "devDependencies": {
+    "fs": "0.0.1-security",
+    "mqtt": "^4.2.6"
   }
 }
