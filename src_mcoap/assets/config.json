@@ -1,0 +1,14 @@
+{
+    "broker": {
+        "ip": "192.168.50.130",
+        "port": 1883
+      },
+    "server":{
+        "ip": "192.168.50.110", 
+        "port" : 8000
+    },
+    "message":"1234",
+    "file" : "testFolder/1KB.bin",
+    "topic_server": "SERVER",
+    "topic_client": "CLIENT"
+}

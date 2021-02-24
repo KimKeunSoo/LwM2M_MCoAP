@@ -35,7 +35,7 @@ function readResource(devId, objId) {
 }
 
 client_module.start(config);
-//192.168.4.129
+
 client_module.connect("192.168.50.110", 5683, "/", "device1");
 client_module.create("/75002/2");
 

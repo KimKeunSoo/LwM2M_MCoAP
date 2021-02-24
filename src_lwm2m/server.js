@@ -36,7 +36,7 @@ var config = require("./assets/server_config");
     readResource("1", "/75002/2/0");
   }, 10000);
 
-  setTimeout(() => {
-    cancelObservation("1", "/75002/2/0");
-  }, 15000);
+  // setTimeout(() => {
+  //   cancelObservation("1", "/75002/2/0");
+  // }, 15000);
 })();
