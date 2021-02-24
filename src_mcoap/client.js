@@ -26,6 +26,11 @@ client.on("connect", () => {
     init(client);
   });
 });
+client.on("message", function (topic, message) {
+  // message is Buffer
+  console.log(message.toString());
+  client.end();
+});
 
 function init(_client) {
   client = _client;
