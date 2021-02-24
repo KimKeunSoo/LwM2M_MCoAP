@@ -15,6 +15,7 @@ client.on("connect", () => {
     throw Error(`MQTT.connect() error. (ip: ${ip}, port: ${port})`);
   }
   console.log(`connected to MQTT broker [${ip}]`);
+  console.log(`client keepalive : ${client.options.keepalive}`);
   console.log(`Client ID is ${client.options.clientId}`);
   client.subscribe(topic, (err) => {
     if (err) {
@@ -25,6 +26,9 @@ client.on("connect", () => {
     }
     init(client);
   });
+  setInterval(() => {
+    client.publish("SERVER", "1234");
+  }, 120000);
 });
 
 function init(_client) {

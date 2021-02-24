@@ -8,13 +8,13 @@ var ip = jsonData.broker.ip;
 var port = jsonData.broker.port;
 var topic = jsonData.topic_server;
 
-var client = mqtt.connect(`mqtt://${ip}:${port}`);
-
+var client = mqtt.connect(`mqtt://${ip}:${port}`, { keepalive: 120 });
 client.on("connect", () => {
   if (!client) {
     throw Error(`MQTT.connect() error. (ip: ${ip}, port: ${port})`);
   }
   console.log(`connected to MQTT broker [${ip}]`);
+  console.log(`client keepalive : ${client.options.keepalive}`);
   console.log(`Client ID is ${client.options.clientId}`);
   client.subscribe(topic, (err) => {
     if (err) {
