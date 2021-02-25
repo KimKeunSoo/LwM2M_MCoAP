@@ -123,6 +123,23 @@ function set(objUri, resId, resValue) {
   );
 }
 
+function updateConnection2() {
+  if (globalDeviceInfo) {
+    lwm2mClient.update("", function (error, deviceInfo) {
+      if (error) {
+        console.log(error);
+      } else {
+        globalDeviceInfo = deviceInfo;
+        setHandlers(deviceInfo);
+        console.log("updated :\n--------------------------------\n");
+      }
+    });
+  } else {
+    console.error(
+      "\nCouldn't find device information (the connection may have not been completed)."
+    );
+  }
+}
 function updateConnection() {
   if (globalDeviceInfo) {
     lwm2mClient.update(globalDeviceInfo, function (error, deviceInfo) {
@@ -163,3 +180,5 @@ exports.start = start;
 exports.connect = connect;
 exports.create = create;
 exports.set = set;
+exports.updateConnection = updateConnection;
+exports.updateConnection2 = updateConnection2;

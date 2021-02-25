@@ -207,30 +207,6 @@ function discoverType(commands) {
   );
 }
 
-function read(commands) {
-  var obj = parseResourceId(commands[1], false);
-
-  if (obj) {
-    lwm2mServer.read(
-      commands[0],
-      obj.objectType,
-      obj.objectId,
-      obj.resourceId,
-      function (error, result) {
-        if (error) {
-          clUtils.handleError(error);
-        } else {
-          console.log("\nResource read:\n----------------------------\n");
-          console.log("Id: %s", commands[1]);
-          console.log("Value: %s", result);
-        }
-      }
-    );
-  } else {
-    console.log("\nCouldn't parse resource URI: " + commands[1]);
-  }
-}
-
 function listClients(commands) {
   lwm2mServer.listDevices(function (error, deviceList) {
     if (error) {
@@ -248,7 +224,7 @@ function listClients(commands) {
 
 function handleValues(value, objectType, objectId, resourceId, deviceId) {
   console.log(
-    "\nValue changed\ndeviceID: %s\nobjectID: %s\nresourceID: %s\nGot new value: %s\n",
+    "\nValue get(or changed)\ndeviceID: %s\nobjectID: %s\nresourceID: %s\nGot new value: %s\n",
     deviceId,
     objectId,
     resourceId,
@@ -283,6 +259,23 @@ function observe(devId, objectType, objectId, resourceId, activefunction) {
         var date = new Date();
         globalStart = date.getTime();
         console.log("Start Time : " + globalStart);
+      }
+    }
+  );
+}
+function read(devId, objectType, objectId, resourceId) {
+  lwm2mServer.read(
+    devId,
+    objectType,
+    objectId,
+    resourceId,
+    function (error, result) {
+      if (error) {
+        console.log("error: can not read");
+      } else {
+        console.log("\nResource read:\n----------------------------\n");
+        console.log("Id: %s", objectId);
+        console.log("Value: %s", result);
       }
     }
   );

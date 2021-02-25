@@ -26,9 +26,9 @@ client.on("connect", () => {
     }
     init(client);
   });
-  setInterval(() => {
-    client.publish("SERVER", "1234");
-  }, 130000);
+  // setInterval(() => {
+  //   client.publish("SERVER", "1234");
+  // }, 400000);
 });
 
 function init(_client) {
