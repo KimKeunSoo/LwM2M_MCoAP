@@ -6,7 +6,6 @@ var lwm2mClient = require("lwm2m-node-lib").client,
 function start(config) {
   lwm2mClient.init(config);
 }
-
 function handleWrite(objectType, objectId, resourceId, value, callback) {
   console.log("\nValue written:\n--------------------------------\n");
   console.log("-> ObjectType: %s", objectType);
@@ -123,23 +122,6 @@ function set(objUri, resId, resValue) {
   );
 }
 
-function updateConnection2() {
-  if (globalDeviceInfo) {
-    lwm2mClient.update("", function (error, deviceInfo) {
-      if (error) {
-        console.log(error);
-      } else {
-        globalDeviceInfo = deviceInfo;
-        setHandlers(deviceInfo);
-        console.log("updated :\n--------------------------------\n");
-      }
-    });
-  } else {
-    console.error(
-      "\nCouldn't find device information (the connection may have not been completed)."
-    );
-  }
-}
 function updateConnection() {
   if (globalDeviceInfo) {
     lwm2mClient.update(globalDeviceInfo, function (error, deviceInfo) {
@@ -181,4 +163,3 @@ exports.connect = connect;
 exports.create = create;
 exports.set = set;
 exports.updateConnection = updateConnection;
-exports.updateConnection2 = updateConnection2;

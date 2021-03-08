@@ -6,7 +6,7 @@ const jsonData = JSON.parse(jsonFile);
 let initialized = false;
 var ip = jsonData.broker.ip;
 var port = jsonData.broker.port;
-var topic = jsonData.topic_server;
+var topic = jsonData.topic_client;
 
 var client = mqtt.connect(`mqtt://${ip}:${port}`, { keepalive: 120 });
 client.on("connect", () => {
