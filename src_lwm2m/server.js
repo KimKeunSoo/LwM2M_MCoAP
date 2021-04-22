@@ -1,14 +1,18 @@
+const { performance } = require("perf_hooks");
 var server_module = require("./assets/server_module");
 var config = require("./assets/server_config");
+var end = 0;
 
 server_module.start(config);
-function readResource(devId, objId) {
+function readResource(devId, objId, callback) {
   var obj = server_module.parseResourceId(objId, false);
   if (obj) {
     server_module.read(devId, obj.objectType, obj.objectId, obj.resourceId);
+    end = performance.now();
   } else {
     console.log("\nCouldn't parse resource URI: " + devId);
   }
+  callback(end);
 }
 
 // server_module.getServer().on("message", function (message, remote) {
@@ -41,6 +45,9 @@ function readResource(devId, objId) {
 
 setTimeout(() => {
   setInterval(() => {
-    readResource("1", "/75002/2/0");
+    const start = performance.now();
+    readResource("1", "/75002/2/0", function (end) {
+      console.log(end - start);
+    });
   }, 2000);
 }, 5000);

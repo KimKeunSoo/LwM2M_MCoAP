@@ -9,6 +9,7 @@ client_module.create("/75002/2");
 
 let i = 100;
 client_module.set("/75002/2", 0, i);
+
 // setInterval(() => {
 //   console.log("Value Changed : %d -> %d", i, i + 100);
 //   console.log();
