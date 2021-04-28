@@ -5,6 +5,7 @@ var async = require("async"),
   globalStart,
   globalEnd,
   flag = 0;
+const { performance } = require("perf_hooks");
 
 function handleResult(message) {
   return function (error) {
@@ -263,7 +264,7 @@ function observe(devId, objectType, objectId, resourceId, activefunction) {
     }
   );
 }
-function read(devId, objectType, objectId, resourceId) {
+function read(devId, objectType, objectId, resourceId, callback) {
   lwm2mServer.read(
     devId,
     objectType,
@@ -273,16 +274,17 @@ function read(devId, objectType, objectId, resourceId) {
       if (error) {
         console.log("error: can not read");
       } else {
-        console.log("\nResource read:\n----------------------------");
-        console.log(
-          "Id : rd/%s/%s/%s/%s",
-          devId,
-          objectType,
-          objectId,
-          resourceId
-        );
-        console.log("Value: %s", result);
-        console.log("Size : %s", byteCount(result));
+        // console.log("-----------read-------------");
+        // console.log(
+        //   "Id : rd/%s/%s/%s/%s",
+        //   devId,
+        //   objectType,
+        //   objectId,
+        //   resourceId
+        // );
+        // console.log("Value: %s", result);
+        // console.log("Size : %d", byteCount(result));
+        callback(performance.now());
       }
     }
   );

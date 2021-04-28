@@ -7,12 +7,19 @@ server_module.start(config);
 function readResource(devId, objId, callback) {
   var obj = server_module.parseResourceId(objId, false);
   if (obj) {
-    server_module.read(devId, obj.objectType, obj.objectId, obj.resourceId);
-    end = performance.now();
+    server_module.read(
+      devId,
+      obj.objectType,
+      obj.objectId,
+      obj.resourceId,
+      function (res) {
+        end = res;
+        callback(end);
+      }
+    );
   } else {
     console.log("\nCouldn't parse resource URI: " + devId);
   }
-  callback(end);
 }
 
 // server_module.getServer().on("message", function (message, remote) {
@@ -46,8 +53,10 @@ function readResource(devId, objId, callback) {
 setTimeout(() => {
   setInterval(() => {
     const start = performance.now();
+    //console.log("start : " + start);
     readResource("1", "/75002/2/0", function (end) {
-      console.log(end - start);
+      // console.log("----------------------------\nend : " + end);
+      console.log(`**Delay Time : ${end - start}\n\n`);
     });
-  }, 2000);
+  }, 4000);
 }, 5000);
